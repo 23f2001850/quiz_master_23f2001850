@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Take Quiz - Quiz Master{% endblock %}
+
+{% block styles %}
+<style>
+    .question-card {
+        margin-bottom: 2rem;
+    }
+    .timer {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('user_chapters', subject_id=quiz.chapter.subject.id) }}">{{ quiz.chapter.subject.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('user_quizzes', chapter_id=quiz.chapter.id) }}">{{ quiz.chapter.name }}</a></li>
+                <li class="breadcrumb-item active">Quiz #{{ quiz.id }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-8">
+        <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
+        <p>Answer all questions and submit to complete the quiz.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="timer" id="timer">Time Remaining: <span id="time">{{ quiz.time_duration }}</span></div>
+    </div>
+</div>
+
+<form method="POST" action="{{ url_for('take_quiz', quiz_id=quiz.id) }}" id="quizForm">
+    <div class="row mt-4">
+        {% if questions %}
+            {% for question in questions %}
+                <div class="col-md-12 question-card">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Question {{ loop.index }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-4"><strong>{{ question.question_statement }}</strong></p>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option1_{{ question.id }}" value="1" required>
+                                <label class="form-check-label" for="option1_{{ question.id }}">
+                                    {{ question.option1 }}
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option2_{{ question.id }}" value="2">
+                                <label class="form-check-label" for="option2_{{ question.id }}">
+                                    {{ question.option2 }}
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option3_{{ question.id }}" value="3">
+                                <label class="form-check-label" for="option3_{{ question.id }}">
+                                    {{ question.option3 }}
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option4_{{ question.id }}" value="4">
+                                <label class="form-check-label" for="option4_{{ question.id }}">
+                                    {{ question.option4 }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <div class="col-md-12 mb-5">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-warning">
+                    This quiz doesn't have any questions yet. Please try another quiz.
+                </div>
+                <a href="{{ url_for('user_quizzes', chapter_id=quiz.chapter.id) }}" class="btn btn-primary">Back to Quizzes</a>
+            </div>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Timer functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const timerDisplay = document.getElementById('time');
+        const quizForm = document.getElementById('quizForm');
+        
+        // Parse the time duration (HH:MM)
+        const timeParts = "{{ quiz.time_duration }}".split(':');
+        let totalSeconds = parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60;
+        
+        const timer = setInterval(function() {
+            totalSeconds--;
+            
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                alert('Time is up! Your quiz will be submitted automatically.');
+                quizForm.submit();
+                return;
+            }
+            
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            timerDisplay.textContent = 
+                (hours < 10 ? '0' + hours : hours) + ':' + 
+                (minutes < 10 ? '0' + minutes : minutes) + ':' + 
+                (seconds < 10 ? '0' + seconds : seconds);
+        }, 1000);
+    });
+</script>
+{% endblock %}

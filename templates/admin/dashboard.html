@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Admin Dashboard</h2>
+        <p>Welcome to the Quiz Master admin dashboard. Manage subjects, chapters, quizzes, and questions from here.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ subjects_count }}</h5>
+                <p class="card-text">Subjects</p>
+                <a href="{{ url_for('admin_subjects') }}" class="btn btn-primary">Manage Subjects</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ chapters_count }}</h5>
+                <p class="card-text">Chapters</p>
+                <a href="{{ url_for('admin_chapters') }}" class="btn btn-primary">Manage Chapters</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ quizzes_count }}</h5>
+                <p class="card-text">Quizzes</p>
+                <a href="{{ url_for('admin_quizzes') }}" class="btn btn-primary">Manage Quizzes</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ users_count }}</h5>
+                <p class="card-text">Users</p>
+                <!-- Find the View Users button and make sure it has this href -->
+                <a href="{{ url_for('admin_users') }}" class="btn btn-primary">View Users</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Quiz Statistics</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="quizChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">User Activity</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="userChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quiz Statistics Chart - Using dynamic data
+        var quizCtx = document.getElementById('quizChart').getContext('2d');
+        var quizChart = new Chart(quizCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ subject_names|tojson }},
+                datasets: [{
+                    label: 'Number of Quizzes',
+                    data: {{ quiz_counts|tojson }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // User Activity Chart - Using dynamic data
+        var userCtx = document.getElementById('userChart').getContext('2d');
+        var userChart = new Chart(userCtx, {
+            type: 'line',
+            data: {
+                labels: {{ months|tojson }},
+                datasets: [{
+                    label: 'User Registrations',
+                    data: {{ user_registrations|tojson }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0,  // Force whole numbers
+                            stepSize: 1    // Step by 1
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                // Display whole numbers in tooltips
+                                return 'User Registrations: ' + Math.round(context.raw);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

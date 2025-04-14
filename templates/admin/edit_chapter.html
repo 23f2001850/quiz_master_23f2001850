@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Chapter</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+            {% for error in form.description.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.subject_id.label(class="form-label") }}
+            {{ form.subject_id(class="form-select") }}
+            {% for error in form.subject_id.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Chapter</button>
+            <a href="{{ url_for('admin_chapters') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

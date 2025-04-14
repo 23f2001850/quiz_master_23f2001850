@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz History - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Your Quiz History</h2>
+        <p>View all your previous quiz attempts and results.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        {% if scores %}
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Quiz Attempts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Chapter</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in scores %}
+                                    <tr>
+                                        <td>{{ score.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>{{ score.quiz.chapter.subject.name }}</td>
+                                        <td>{{ score.quiz.chapter.name }}</td>
+                                        <td>{{ score.total_scored }}/{{ score.total_questions }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {{ 'bg-success' if (score.total_scored / score.total_questions * 100) >= 70 else 'bg-warning' if (score.total_scored / score.total_questions * 100) >= 40 else 'bg-danger' }}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ (score.total_scored / score.total_questions * 100)|round }}%;" 
+                                                     aria-valuenow="{{ (score.total_scored / score.total_questions * 100)|round }}" 
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                    {{ (score.total_scored / score.total_questions * 100)|round }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('quiz_result', score_id=score.id) }}" class="btn btn-sm btn-info">View</a>
+                                            <a href="{{ url_for('take_quiz', quiz_id=score.quiz.id) }}" class="btn btn-sm btn-primary">Retake</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Performance by Subject</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="subjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Progress Over Time</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                You haven't attempted any quizzes yet. Go to the dashboard to start taking quizzes.
+            </div>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if scores %}
+            // Get actual data from the user's quiz attempts
+            
+            // Prepare data for subject performance chart
+            var subjectLabels = {{ subject_names|tojson }};
+            var subjectScores = {{ subject_scores|tojson }};
+            
+            // Subject Performance Chart
+            var subjectCtx = document.getElementById('subjectChart').getContext('2d');
+            var subjectChart = new Chart(subjectCtx, {
+                type: 'bar',
+                data: {
+                    labels: subjectLabels,
+                    datasets: [{
+                        label: 'Average Score (%)',
+                        data: subjectScores,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(153, 102, 255, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Prepare data for progress over time chart
+            var timeLabels = {{ time_labels|tojson }};
+            var progressScores = {{ progress_scores|tojson }};
+            
+            // Progress Chart
+            var progressCtx = document.getElementById('progressChart').getContext('2d');
+            var progressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Average Score (%)',
+                        data: progressScores,
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 2,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    });
+</script>
+{% endblock %}

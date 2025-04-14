@@ -1,0 +1,43 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Users - Admin Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Users</li>
+{% endblock %}
+
+{% block admin_content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Registered Users</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Qualification</th>
+                        <th>Date of Birth</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>{{ user.qualification }}</td>
+                        <td>{{ user.dob.strftime('%Y-%m-%d') if user.dob else 'N/A' }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

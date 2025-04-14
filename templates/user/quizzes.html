@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Quizzes - {{ chapter.name }} - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('user_chapters', subject_id=chapter.subject.id) }}">{{ chapter.subject.name }}</a></li>
+                <li class="breadcrumb-item active">{{ chapter.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <h2>Quizzes for {{ chapter.name }}</h2>
+        <p>{{ chapter.description }}</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    {% if quizzes %}
+        {% for quiz in quizzes %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Quiz #{{ quiz.id }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <p><strong>Date:</strong> {{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</p>
+                            <p><strong>Duration:</strong> {{ quiz.time_duration }}</p>
+                            <p><strong>Questions:</strong> {{ quiz.questions|length }}</p>
+                            {% if quiz.remarks %}
+                                <p><strong>Remarks:</strong> {{ quiz.remarks }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        {% set attempted = false %}
+                        {% for score in current_user.quiz_attempts %}
+                            {% if score.quiz_id == quiz.id %}
+                                {% set attempted = true %}
+                                <div class="alert alert-info">
+                                    <p class="mb-0"><strong>Previous Attempt:</strong> {{ score.total_scored }}/{{ score.total_questions }} ({{ (score.total_scored / score.total_questions * 100)|round }}%)</p>
+                                    <small>{{ score.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-primary w-100">
+                            {% if attempted %}Retake Quiz{% else %}Start Quiz{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                No quizzes available for this chapter yet. Please check back later.
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

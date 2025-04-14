@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Quiz - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add New Quiz</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_quiz') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.chapter_id.label(class="form-label") }}
+                        {{ form.chapter_id(class="form-select") }}
+                        {% if form.chapter_id.errors %}
+                            <div class="text-danger">
+                                {% for error in form.chapter_id.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.date_of_quiz.label(class="form-label") }}
+                        {{ form.date_of_quiz(class="form-control", type="date") }}
+                        {% if form.date_of_quiz.errors %}
+                            <div class="text-danger">
+                                {% for error in form.date_of_quiz.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.time_duration.label(class="form-label") }}
+                        {{ form.time_duration(class="form-control", placeholder="HH:MM") }}
+                        {% if form.time_duration.errors %}
+                            <div class="text-danger">
+                                {% for error in form.time_duration.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.remarks.label(class="form-label") }}
+                        {{ form.remarks(class="form-control", rows=3) }}
+                        {% if form.remarks.errors %}
+                            <div class="text-danger">
+                                {% for error in form.remarks.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_quizzes') }}" class="btn btn-secondary">Cancel</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

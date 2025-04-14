@@ -1,0 +1,56 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Question</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.question_statement.label(class="form-label") }}
+            {{ form.question_statement(class="form-control") }}
+            {% for error in form.question_statement.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.option1.label(class="form-label") }}
+            {{ form.option1(class="form-control") }}
+            {% for error in form.option1.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.option2.label(class="form-label") }}
+            {{ form.option2(class="form-control") }}
+            {% for error in form.option2.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.option3.label(class="form-label") }}
+            {{ form.option3(class="form-control") }}
+            {% for error in form.option3.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.option4.label(class="form-label") }}
+            {{ form.option4(class="form-control") }}
+            {% for error in form.option4.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.correct_option.label(class="form-label") }}
+            {{ form.correct_option(class="form-select") }}
+            {% for error in form.correct_option.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Question</button>
+            <a href="{{ url_for('quiz_questions', quiz_id=question.quiz_id) }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

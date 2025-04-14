@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Question - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin_quizzes') }}">Quizzes</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('quiz_questions', quiz_id=quiz.id) }}">Questions for Quiz #{{ quiz.id }}</a></li>
+                <li class="breadcrumb-item active">Add Question</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add New Question to Quiz: {{ quiz.chapter.name }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_question', quiz_id=quiz.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.question_statement.label(class="form-label") }}
+                        {{ form.question_statement(class="form-control", rows=3) }}
+                        {% if form.question_statement.errors %}
+                            <div class="text-danger">
+                                {% for error in form.question_statement.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.option1.label(class="form-label") }}
+                                {{ form.option1(class="form-control") }}
+                                {% if form.option1.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.option1.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.option2.label(class="form-label") }}
+                                {{ form.option2(class="form-control") }}
+                                {% if form.option2.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.option2.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.option3.label(class="form-label") }}
+                                {{ form.option3(class="form-control") }}
+                                {% if form.option3.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.option3.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.option4.label(class="form-label") }}
+                                {{ form.option4(class="form-control") }}
+                                {% if form.option4.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.option4.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.correct_option.label(class="form-label") }}
+                        {{ form.correct_option(class="form-select") }}
+                        {% if form.correct_option.errors %}
+                            <div class="text-danger">
+                                {% for error in form.correct_option.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('quiz_questions', quiz_id=quiz.id) }}" class="btn btn-secondary">Cancel</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

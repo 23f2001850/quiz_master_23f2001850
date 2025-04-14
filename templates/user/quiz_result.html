@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Result - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('user_chapters', subject_id=score.quiz.chapter.subject.id) }}">{{ score.quiz.chapter.subject.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('user_quizzes', chapter_id=score.quiz.chapter.id) }}">{{ score.quiz.chapter.name }}</a></li>
+                <li class="breadcrumb-item active">Quiz Result</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Quiz Result</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h2>Your Score: {{ score.total_scored }}/{{ score.total_questions }}</h2>
+                    <h3>{{ (score.total_scored / score.total_questions * 100)|round }}%</h3>
+                    
+                    <div class="progress mt-3" style="height: 30px;">
+                        <div class="progress-bar 
+                            {% if (score.total_scored / score.total_questions * 100) >= 70 %}
+                                bg-success
+                            {% elif (score.total_scored / score.total_questions * 100) >= 40 %}
+                                bg-warning
+                            {% else %}
+                                bg-danger
+                            {% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ (score.total_scored / score.total_questions * 100)|round }}%;" 
+                             aria-valuenow="{{ (score.total_scored / score.total_questions * 100)|round }}" 
+                             aria-valuemin="0" aria-valuemax="100">
+                            {{ (score.total_scored / score.total_questions * 100)|round }}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Subject:</strong> {{ score.quiz.chapter.subject.name }}</p>
+                        <p><strong>Chapter:</strong> {{ score.quiz.chapter.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Date Attempted:</strong> {{ score.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Quiz Date:</strong> {{ score.quiz.date_of_quiz.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('take_quiz', quiz_id=score.quiz.id) }}" class="btn btn-primary me-2">Retake Quiz</a>
+                    <a href="{{ url_for('user_quizzes', chapter_id=score.quiz.chapter.id) }}" class="btn btn-secondary">Back to Quizzes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

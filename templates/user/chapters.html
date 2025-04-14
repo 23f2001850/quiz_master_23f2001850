@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Chapters - {{ subject.name }} - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">{{ subject.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <h2>{{ subject.name }}</h2>
+        <p>{{ subject.description }}</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    {% if chapters %}
+        {% for chapter in chapters %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">{{ chapter.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ chapter.description }}</p>
+                        <p class="text-muted">Available Quizzes: {{ chapter.quizzes|length }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('user_quizzes', chapter_id=chapter.id) }}" class="btn btn-primary w-100">View Quizzes</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                No chapters available for this subject yet. Please check back later.
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
